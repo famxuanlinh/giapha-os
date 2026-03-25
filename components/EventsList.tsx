@@ -96,6 +96,32 @@ function EventCard({
     return null;
   })();
 
+  const dateLabel = (() => {
+    const weekdays = [
+      "Chủ nhật",
+      "Thứ hai",
+      "Thứ ba",
+      "Thứ tư",
+      "Thứ năm",
+      "Thứ sáu",
+      "Thứ bảy",
+    ];
+    const d = event.nextOccurrence;
+    const dayOfWeek = weekdays[d.getDay()];
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const year = d.getFullYear();
+
+    let label = `${dayOfWeek}, ngày ${day}/${month}`;
+    if (event.type === "custom_event") {
+      label += `/${year}`;
+    }
+    if (event.type === "death_anniversary") {
+      label += ` (Âm lịch: ${event.eventDateLabel.replace(" ÂL", "")})`;
+    }
+    return label;
+  })();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -185,13 +211,10 @@ function EventCard({
         <div className="flex flex-col gap-0.5 mt-1">
           <p className="text-[13px] sm:text-sm text-stone-500 flex items-center gap-1.5 leading-snug">
             <CalendarDays className="size-3.5 shrink-0" />
-            <span className="font-medium text-stone-600">
-              {event.eventDateLabel}
-            </span>
-            {yearsInfo && (
-              <span className="text-stone-400">· {yearsInfo}</span>
-            )}
+            <span className="font-medium text-stone-600">{dateLabel}</span>
+            {yearsInfo && <span className="text-stone-400">· {yearsInfo}</span>}
           </p>
+
           {event.location && (
             <p className="text-[13px] sm:text-sm text-stone-500 flex items-center gap-1.5 leading-snug">
               <MapPin className="size-3.5 shrink-0" />
@@ -245,7 +268,17 @@ export default function EventsList({
 
   const [todayDate] = useState(() => {
     const today = new Date();
-    const solarStr = `Ngày ${today.getDate()} tháng ${today.getMonth() + 1} năm ${today.getFullYear()}`;
+    const weekdays = [
+      "Chủ nhật",
+      "Thứ hai",
+      "Thứ ba",
+      "Thứ tư",
+      "Thứ năm",
+      "Thứ sáu",
+      "Thứ bảy",
+    ];
+    const dayOfWeek = weekdays[today.getDay()];
+    const solarStr = `${dayOfWeek}, ngày ${today.getDate()} tháng ${today.getMonth() + 1} năm ${today.getFullYear()}`;
     let lunarStr = "";
     try {
       const solar = Solar.fromYmd(
