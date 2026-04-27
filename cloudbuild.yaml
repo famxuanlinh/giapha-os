@@ -16,3 +16,6 @@ substitutions:
   _SUPABASE_URL: ''
   _SUPABASE_KEY: ''
   _SITE_NAME: ''
+
+options:
+  logging: CLOUD_LOGGING_ONLY
